@@ -1067,6 +1067,10 @@ def convolution(inputs,
 
     df = ('channels_first'
           if data_format and data_format.startswith('NC') else 'channels_last')
+    print(sc.name, 'filters: ', num_outputs, 'kernel_size: ', kernel_size, 'stride', stride, 'paddinig', padding, 'data_formrat', df, 'rate', rate)
+    print(sc.name, 'use_bias', not normalizer_fn and biases_initializer, 'weights iinitalizer', weights_initializer)
+    print (sc.name, 'bias_initializer', 'zeros', 'weights-regularizer', weights_regularizer, 'biasses regularizer ', biases_regularizer)
+    print(sc.name, trainable);
     layer = layer_class(
         filters=num_outputs,
         kernel_size=kernel_size,
@@ -2817,13 +2821,16 @@ def separable_convolution2d(
       # Actually apply depthwise conv instead of separable conv.
       dtype = inputs.dtype.base_dtype
       kernel_h, kernel_w = utils.two_element_tuple(kernel_size)
+      # print(sc.name, 'kernel h/w', kernel_h, kernel_w);
       stride_h, stride_w = utils.two_element_tuple(stride)
+      print(sc.name, 'kernel h/w', kernel_h, kernel_w, 'stride h/w', stride_h, stride_w);
       num_filters_in = utils.channel_dimension(
           inputs.get_shape(), df, min_rank=4)
       weights_collections = utils.get_variable_collections(
           variables_collections, 'weights')
 
       depthwise_shape = [kernel_h, kernel_w, num_filters_in, depth_multiplier]
+      print(sc.name, 'depthwise shape', depthwise_shape);
       depthwise_weights = variables.model_variable(
           'depthwise_weights',
           shape=depthwise_shape,
@@ -2835,7 +2842,7 @@ def separable_convolution2d(
       strides = [
           1, 1, stride_h, stride_w
       ] if data_format.startswith('NC') else [1, stride_h, stride_w, 1]
-
+      print(sc.name, 'padding', padding)
       outputs = nn.depthwise_conv2d(
           inputs,
           depthwise_weights,
